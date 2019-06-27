@@ -10,11 +10,6 @@ cd(ProjDir) do
 
     include(joinpath(ProjDir, "bernoulli.jl"))
   
-    if rc == 0
-      s = summarize(chns)
-      @test s[:theta, :mean][1] ≈ 0.34 atol=0.1
-    end
-
     isdir("tmp") &&
       rm("tmp", recursive=true);
   

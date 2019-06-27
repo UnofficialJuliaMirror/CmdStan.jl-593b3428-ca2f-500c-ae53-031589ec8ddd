@@ -6,6 +6,12 @@ git-tree-sha1 = "380e36c66edfa099cd90116b24c1ce8cafccac40"
 uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
 version = "0.4.1"
 
+[[ArgCheck]]
+deps = ["Random"]
+git-tree-sha1 = "dab25d711a1dedb707a55dbc1eb9fd578f76ff32"
+uuid = "dce04be8-c92d-5529-be00-80e4d2c0e197"
+version = "1.0.1"
+
 [[Arpack]]
 deps = ["BinaryProvider", "Libdl", "LinearAlgebra"]
 git-tree-sha1 = "07a2c077bdd4b6d23a40342a8a108e2ee5e58ab6"
@@ -170,6 +176,11 @@ deps = ["Base64", "DocStringExtensions", "InteractiveUtils", "JSON", "LibGit2", 
 git-tree-sha1 = "38509269fc99a9bc450fdb9e17e805021f3e5b1b"
 uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 version = "0.22.4"
+
+[[ElasticArrays]]
+git-tree-sha1 = "d9c079b747b9e9985d83e806bb77e41d149c959a"
+uuid = "fdbdab4c-e67f-52f5-8c3f-e7b388dad3d4"
+version = "0.4.0"
 
 [[FFTW]]
 deps = ["AbstractFFTs", "BinaryProvider", "Compat", "Conda", "Libdl", "LinearAlgebra", "Reexport", "Test"]
@@ -485,6 +496,24 @@ deps = ["BinDeps", "BinaryProvider", "Libdl", "Test"]
 git-tree-sha1 = "0b45dc2e45ed77f445617b99ff2adf0f5b0f23ea"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
 version = "0.7.2"
+
+[[StanDump]]
+deps = ["ArgCheck", "DocStringExtensions"]
+git-tree-sha1 = "bfaebe19ada44a52a6c797d48473f1bb22fd0853"
+uuid = "9713c8f3-0168-54b5-986e-22c526958f39"
+version = "0.2.0"
+
+[[StanRun]]
+deps = ["ArgCheck", "Distributed", "DocStringExtensions", "Parameters", "StanDump"]
+git-tree-sha1 = "da0cdcdc28d51a8b3215ca12fcd12ed3372228d3"
+uuid = "d49c3b98-12bb-537a-8c40-37c13654c7f4"
+version = "0.2.1"
+
+[[StanSamples]]
+deps = ["ArgCheck", "DocStringExtensions", "ElasticArrays"]
+git-tree-sha1 = "569e6236a9d49ae46c525b542491f324eca7a616"
+uuid = "52d0d7a9-b304-5f31-a727-b234d0b606ff"
+version = "0.1.0"
 
 [[StaticArrays]]
 deps = ["LinearAlgebra", "Random", "Statistics"]
