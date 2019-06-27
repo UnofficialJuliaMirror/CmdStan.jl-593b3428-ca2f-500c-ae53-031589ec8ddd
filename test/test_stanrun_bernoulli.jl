@@ -1,4 +1,4 @@
-using MCMCChains, Test
+using CmdStan, MCMCChains, Test
 
 ProjDir = joinpath(dirname(@__FILE__), "..", "examples", "StanRun")
 cd(ProjDir) do
