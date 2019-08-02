@@ -11,7 +11,7 @@ import Base: show
 *  Diagnose::Method           : Diagnostics
 *  Variational::Method        : Variational Bayes
 ```
-""" 
+"""
 abstract type Method end
 
 const DataDict = Dict{String, Any}
@@ -54,17 +54,17 @@ mutable struct Stanmodel
 end
 
 """
-# Method Stanmodel 
+# Method Stanmodel
 
-Create a Stanmodel. 
+Create a Stanmodel.
 
 ### Constructors
 ```julia
 Stanmodel(
   method=Sample();
-  name="noname", 
+  name="noname",
   nchains=4,
-  num_warmup=1000, 
+  num_warmup=1000,
   num_samples=1000,
   thin=1,
   model="",
@@ -105,9 +105,9 @@ Stanmodel(
 ```
 
 ### CmdStan.jl supports 3 output_format values:
-```julia     
+```julia
 1. :array           # Returns an array of draws
-2. :namedarray      # Returns a NamedArrays object 
+2. :namedarray      # Returns a NamedArrays object
 3. :mcmcchains      # Return an MCMCChains.Chains object (default)
 
 The first 2 return an Array{Float64, 3} with ndraws, nvars, nchains
@@ -123,7 +123,7 @@ See also `?CmdStan.convert_a3d`.
 
 ### Example
 ```julia
-stanmodel = Stanmodel(num_samples=1200, thin=2, name="bernoulli", 
+stanmodel = Stanmodel(num_samples=1200, thin=2, name="bernoulli",
   model=bernoullimodel);
 ```
 
@@ -139,9 +139,9 @@ stanmodel = Stanmodel(num_samples=1200, thin=2, name="bernoulli",
 """
 function Stanmodel(
   method=Sample();
-  name="noname", 
+  name="noname",
   nchains=4,
-  num_warmup=1000, 
+  num_warmup=1000,
   num_samples=1000,
   thin=1,
   model="",
@@ -154,34 +154,37 @@ function Stanmodel(
   pdir::String=pwd(),
   tmpdir::String=joinpath(pwd(), "tmp"),
   output_format::Symbol=:mcmcchains)
-  
+
   if !isdir(tmpdir)
     mkdir(tmpdir)
   end
+
+  incStr = includeCommand(model) #optionally include external stan function file
+  !isempty(incStr) ? model = addFunctions(incStr,model,pdir) : nothing
 
   model_file = "$(name).stan"
   if length(model) > 0
     update_model_file(joinpath(tmpdir, "$(name).stan"), strip(model))
   end
-  
+
   id::Int=0
   data_file::String=""
   init_file::String=""
   cmdarray = fill(``, nchains)
-  
+
   if num_samples != 1000
     method.num_samples=num_samples
   end
-  
+
   if num_warmup != 1000
     method.num_warmup=num_warmup
   end
-  
+
   if thin != 1
     method.thin=thin
   end
-  
-  Stanmodel(name, nchains, 
+
+  Stanmodel(name, nchains,
     num_warmup, num_samples, thin,
     id, model, model_file, monitors,
     data, data_file, cmdarray, method, random,
@@ -216,3 +219,40 @@ function model_show(io::IO, m::Stanmodel, compact::Bool)
 end
 
 show(io::IO, m::Stanmodel) = model_show(io, m, false)
+
+"""
+Checks whether the Stan model includes a command to include an external
+Stan file containing function definitions.
+  * `model`: model string
+"""
+function includeCommand(model)
+    if occursin("#include ",model)
+        return "#include "
+    elseif  occursin("# include ",model)
+        return "# include "
+    else
+        return ""
+    end
+end
+
+"""
+Adds functions from external stan file to the model function block.
+  * `incStr`: include command
+  * `model`: model string
+  * `pdir`: project directory
+"""
+
+function addFunctions(incStr,model,pdir)
+    inclIDX = findfirst(incStr,model)
+    srtIDX = inclIDX[end]+1
+    while model[srtIDX] == ' '
+        srtIDX+=1
+    end
+    endIDX = findfirst("\n",model[srtIDX:end])[1]+srtIDX-2
+    filePath = model[srtIDX:endIDX]
+    stream = open(joinpath(pdir,filePath),"r")
+    newFunctions = read(stream,String)
+    close(stream)
+    model = replace(model,model[inclIDX[1]:endIDX]=>"") #Remove path
+    return model[1:inclIDX[1]]*newFunctions*model[inclIDX[1]+1:end]
+end

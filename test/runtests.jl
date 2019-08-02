@@ -3,12 +3,13 @@ using CmdStan, Test, Statistics
 
 println("\nRunning tests for CmdStan-j1-v6:\n")
 
-code_tests = ["test_env.jl",              
+code_tests = ["test_env.jl",
               "test_utilities.jl",
               "test_cmdtype.jl"]
 
 # Run execution_tests only if cmdstan is installed and CMDSTAN_HOME is set correctly.
 execution_tests = [
+  "test_include_file.jl",
   "test_bernoulli.jl",
   "test_bernoulli_diagnostics.jl",
   "test_bernoulli_optimize.jl",
@@ -26,6 +27,7 @@ execution_tests = [
   "test_kidscore.jl",
   "test_fixed_param.jl",
   "test_zerolengtharray.jl"
+
 ]
 
 if CMDSTAN_HOME != ""
@@ -35,14 +37,14 @@ if CMDSTAN_HOME != ""
         println("\n\n\n  * $(my_test) *")
         include(my_test)
     end
-    
+
     for my_test in execution_tests
         println("\n\n  * $(my_test) *\n")
         include(my_test)
     end
-    
+
     println("\n")
-  end 
+  end
 else
   println("\n\nCMDSTAN_HOME not set or found.")
   println("Skipping all tests that depend on CmdStan!\n")
